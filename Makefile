@@ -1,5 +1,5 @@
-SRC	:= mainw.cpp
-HDR	:= mainw.h
+SRC	:= qmsgbox.cpp
+#HDR	:= mainw.h
 TRG	:= example
 
 MOC_SRC	:= $(HDR:%.h=moc_%.cpp)
