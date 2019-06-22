@@ -6,14 +6,19 @@ MOC_SRC	:= $(HDR:%.h=moc_%.cpp)
 SRC	+= $(MOC_SRC)
 
 TOP	?= $(PWD)/..
-INC	+= -I$(TOP)/include/opie-1.2.0 -I$(TOP)/include/qt-2.3.10
-LIB	+= -L$(TOP)/lib/opie-1.2.0 -L$(TOP)/lib/qt-2.3.10 \
+#INC	+= -I$(TOP)/include/opie-1.2.0 -I$(TOP)/include/qt-2.3.10
+#LIB	+= -L$(TOP)/lib/opie-1.2.0 -L$(TOP)/lib/qt-2.3.10 \
+#	   -L$(TOP)/rootfs/lib -L$(TOP)/rootfs/usr/lib \
+#	   -Wl,-rpath,/opt/QtPalmtop/lib -Wl,-rpath,/opt/qt-2.3.10/lib \
+#	   -lqpe -lopiecore2 -lqte -lz -ljpeg
+INC	+= -I$(TOP)/include/qt-2.3.10.new -I$(TOP)/include/freetype
+LIB	+= -L$(TOP)/lib/qt-2.3.10.new \
 	   -L$(TOP)/rootfs/lib -L$(TOP)/rootfs/usr/lib \
-	   -Wl,-rpath,/opt/QtPalmtop/lib -Wl,-rpath,/opt/qt-2.3.10/lib \
-	   -lqpe -lopiecore2 -lqte -lz -ljpeg
+	   -Wl,-rpath,/opt/qt-2.3.10.new/lib \
+	   -lqpe -lqte #-lz -ljpeg
 DEF	+= -DQWS -D_REENTRANT
 #FLAGS	?= -pipe -fno-rtti -fno-exceptions -fPIC -fPIE
-FLAGS	?= -g -O0 -fno-rtti -fno-exceptions -fPIC
+FLAGS	?= -g -Os -pipe -fno-rtti -fno-exceptions -fPIC
 CROSS	?= $(PWD)/../mipseltools-gcc412-lnx26/bin/mipsel-linux-
 MOC	?= ../bin/moc
 

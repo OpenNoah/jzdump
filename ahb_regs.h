@@ -30,7 +30,7 @@ static const uint32_t ahb_regs[] = {
 	0x13010088, 16,
 	0x1301008C, 16,
 	0x13010090, 32,
-	0x1301A000, 8,
+	//0x1301A000, 8,
 	// Boot configuration
 	0x13010000, 32,
 	// -- DMA controller --

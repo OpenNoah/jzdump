@@ -13,7 +13,11 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifdef NOAH_MOBILE
 #include <noahmobile/nmqmessagebox.h>
+#else
+#define NMQMessageBox	QMessageBox
+#endif
 #include "test.h"
 #include "ahb_regs.h"
 
