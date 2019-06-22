@@ -1,6 +1,6 @@
-SRC	:= qmsgbox.cpp
-#HDR	:= mainw.h
-TRG	:= example
+SRC	:= main.cpp test.cpp
+HDR	:= test.h
+TRG	:= jzdump
 
 MOC_SRC	:= $(HDR:%.h=moc_%.cpp)
 SRC	+= $(MOC_SRC)
@@ -13,13 +13,17 @@ LIB	+= -L$(TOP)/lib/opie-1.2.0 -L$(TOP)/lib/qt-2.3.10 \
 	   -lqpe -lopiecore2 -lqte -lz -ljpeg
 DEF	+= -DQWS -D_REENTRANT
 #FLAGS	?= -pipe -fno-rtti -fno-exceptions -fPIC -fPIE
-FLAGS	?= -g -O0 -fno-rtti -fno-exceptions -fPIC -fPIE
+FLAGS	?= -g -O0 -fno-rtti -fno-exceptions -fPIC
 CROSS	?= $(PWD)/../mipseltools-gcc412-lnx26/bin/mipsel-linux-
 MOC	?= ../bin/moc
 
+.PHONY: all
+all: $(TRG)
+
 .PHONY: send
 send: $(TRG)
-	cat $(TRG) | ncat -l -p 1234 --send-only
+	-cat $(TRG) | ncat -l -p 1234 --send-only &
+	./expect | strings
 
 $(TRG): $(SRC:%.cpp=%.o)
 	$(CROSS)g++ -s -o $@ $^ $(LIB) $(FLAGS)

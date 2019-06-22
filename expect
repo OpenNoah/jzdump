@@ -1,0 +1,19 @@
+#!/usr/bin/expect
+spawn telnet -E NP1380
+set timeout 10
+expect -ex "#"
+send "chroot /mnt/rootfs\r"
+expect -ex "#"
+send "cd root\r"
+expect -ex "#"
+send ". vars\r"
+expect -ex "#"
+send "mkdir -p /tmp/.test_data\r"
+expect -ex "#"
+set timeout -1
+send "nc 192.168.2.1 1234 < /dev/null > example && ./example | tee /tmp/.test_data/log\r"
+expect -ex "#"
+send "exit\r"
+expect -ex "#"
+send "exit\r"
+expect eof
