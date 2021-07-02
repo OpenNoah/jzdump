@@ -63,6 +63,7 @@ static struct test_info_t {
 		uint32_t row[4], column[4];
 		uint32_t input[4], pin[4], output[4];
 	} gpio;
+	QWidget *kbd;
 } testInfo;
 
 // Known or problematic ports
@@ -81,6 +82,7 @@ void test(int id)
 	if (id == i++) {
 		testInfo.finished = 0;
 		testInfo.success = 0;
+		testInfo.kbd = 0;
 		ui.updateStatus(TR("开始测试?"));
 		if (NMQMessageBox::information(ui.top, TR("jzdump"), TR("确定要开始系统信息采集吗?"),
 			QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes) {
@@ -231,12 +233,19 @@ void test(int id)
 								QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok;
 		if (!testInfo.testKeys)
 			return;
+
+#if 1
+		testInfo.kbd = new QWidget(ui.top);
+		testInfo.kbd->hide();
+		testInfo.kbd->grabKeyboard();
+#else
 		int err = system("qcop 'QPE/System' 'setKeyboard(QString)' 'None'");
 		if (!WIFEXITED(err) || WEXITSTATUS(err) != 0) {
 			testInfo.testKeys = false;
 			NMQMessageBox::critical(ui.top, TR("错误"), TR("禁用键盘错误: %1 (%2)").arg(WEXITSTATUS(err)).arg(err));
 			return;
 		}
+#endif
 	} else if (id == i++) {
 		ui.updateStatus(TR("测试键盘矩阵 column GPIO..."));
 		if (!testInfo.testKeys)
@@ -384,11 +393,17 @@ void test(int id)
 		}
 	} else if (id == i++) {
 		ui.updateStatus(TR("恢复键盘..."));
+#if 1
+		delete testInfo.kbd;
+		testInfo.kbd = 0;
+#else
 		int err = system("qcop 'QPE/System' 'setKeyboard(QString)' 'TTY:/dev/input/event0'");
 		if (!WIFEXITED(err) || WEXITSTATUS(err) != 0) {
 			NMQMessageBox::warning(ui.top, TR("注意"), TR("恢复键盘错误: %1 (%2)").arg(WEXITSTATUS(err)).arg(err));
 			return;
 		}
+#endif
+
 		if (testInfo.testKeys) {
 			uint32_t cols = 0, rows = 0;
 			for (int ip = 0; ip < 4; ip++) {

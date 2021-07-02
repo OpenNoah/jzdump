@@ -5,8 +5,13 @@
 #include <noahmobile/nmqdialog.h>
 #include <opie2/oapplication.h>
 #else
+#if 1
+#define NMQMainWindow	QMainWindow
+#include <qt.h>
+#else
 #define NMQMainWindow	QMainWindow
 #include <qpe/qpeapplication.h>
+#endif
 #endif
 #include <qt.h>
 #include "test.h"
@@ -51,10 +56,12 @@ int main(int argc, char *argv[])
 {
 #ifdef NOAH_MOBILE
 	Opie::Core::OApplication a(argc, argv);
+#elif 1
+	QApplication a(argc, argv);
 #else
 	QPEApplication a(argc, argv);
-	a.setFont(QFont("noah", 12));
 #endif
+	a.setFont(QFont("noah", 12));
 	QTextCodec *codec = QTextCodec::codecForName("UTF8");
 	a.setDefaultCodec(codec);
 
@@ -64,6 +71,7 @@ int main(int argc, char *argv[])
 	setupUI(w.centralWidget());
 	a.setMainWidget(&w);
 	w.showMaximized();
+	//w.showFullScreen();
 
 	Test *t = new Test(&w);
 	if (t->failed())
