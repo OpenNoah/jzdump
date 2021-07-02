@@ -12,7 +12,7 @@ BIN	= upgrade_$(TYPE).bin
 MKPKG	= ./mkpkg/mkpkg
 
 CLEAN	= $(BIN)
-$(BIN): $(PKGCFG) $(MKPKG) uImage initfs.bin loaderfs.bin build-ipkg
+$(BIN): $(PKGCFG) $(MKPKG) uImage initfs.bin #build-ipkg
 	$(MKPKG) --type=np1000 --create $< $@
 
 ENTRY	= $(shell mkimage -l $(TYPE)/uImage-base | grep 'Entry' | awk '{print $$3}')
@@ -36,13 +36,13 @@ CLEAN	+= initramfs.gz
 initramfs.gz: initramfs
 	(cd initramfs; find . -print | cpio -o -H newc -R 0:0) | gzip -9 > $@
 
-.PHONY: build-syssw_qt
-build-syssw_qt:
-	$(MAKE) -C syssw_qt
+.PHONY: build-jzdump
+build-jzdump:
+	$(MAKE) -C jzdump
 
 CLEAN	+= initfs.bin loaderfs.bin
-initfs.bin loaderfs.bin: %.bin: | build-syssw_qt
-	cp syssw_qt/syssw $*/usr/bin/syssw
+initfs.bin loaderfs.bin: %.bin: | build-jzdump
+	cp jzdump/jzdump $*/usr/bin/jzdump
 	sudo ./initfs.sh $*
 
 CLEAN	+= vmlinux.bin
@@ -73,4 +73,4 @@ uImage: uImage.gz
 clean:
 	rm -f $(CLEAN) $(TARG)
 	$(MAKE) -C mkpkg clean
-	$(MAKE) -C syssw_qt clean
+	$(MAKE) -C jzdump clean

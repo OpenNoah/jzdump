@@ -29,10 +29,12 @@ telnetd -l /bin/sh
 . /etc/profile
 
 # More modules
-insmod /lib/modules/ubi.ko
-insmod /lib/modules/ubifs.ko
-insmod /lib/modules/bdev.ko
-insmod /lib/modules/block-jz.ko
+if ! test -c /dev/ubi_ctrl; then
+	insmod /lib/modules/ubi.ko
+	insmod /lib/modules/ubifs.ko
+	insmod /lib/modules/bdev.ko
+	insmod /lib/modules/block-jz.ko
+fi
 
 udevstart
 
@@ -69,17 +71,24 @@ if [ ! -f /tmp/pointercal ]; then
 	ts_calibrate
 fi
 
-# Mount NAND ubi rootfs
-echo 'Attaching NAND rootfs...' > /dev/tty0
-mtd="$(cat /proc/mtd | fgrep ROOT)"
-if ubiattach -m "${mtd:3:1}" /dev/ubi_ctrl; then
-	udevstart
+if ! test -c /dev/ubi0; then
+	# Mount NAND ubi rootfs
+	echo 'Attaching NAND ubifs...' > /dev/tty0
+	mtd="$(cat /proc/mtd | fgrep ROOT)"
+	if ubiattach -m "${mtd:3:1}" /dev/ubi_ctrl; then
+		udevstart
+	fi
 fi
 
 # Show GUI application
 echo 'Starting GUI application...' > /dev/tty0
 rm -f /tmp/init
-syssw -qws
+jzdump -qws
+
+umount -a
+sync
+reboot -f
+exit
 
 # Check rootfs
 echo 'Checking rootfs...' > /dev/tty0

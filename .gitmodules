@@ -1,3 +1,6 @@
 [submodule "mkpkg"]
 	path = mkpkg
 	url = https://github.com/OpenNoah/NoahSplit.git
+[submodule "jzdump"]
+	path = jzdump
+	url = git@github.com:OpenNoah/jzdump.git
